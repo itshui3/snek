@@ -1,30 +1,46 @@
 import React, { useState, useEffect } from 'react'
 // style
 import './SnekBoard.css'
-
-const size = {
-    x: 30,
-    y: 30
-}
+// assets
+import {
+    buildBoard as defaultBoard
+} from './assets/board'
 
 const SnekBoard = () => {
 
-    const [board, setBoard] = useState(() => {
-        let buildBoard = []
-        for (let j = 0; j < size['y']; j++) {
-            buildBoard.push([])
-            for (let i = 0; i < size['x']; i++) {
-                buildBoard[j].push(0)
-            }
-        }
-        return buildBoard
-    })
+    const [board, setBoard] = useState(defaultBoard)
 
     const [prep, setPrep] = useState(false)
     const [snek, setSnek] = useState(false)
 
+    useEffect(() => {
+        if (!prep) {
+            setBoard(defaultBoard)
+        }
+
+        let x = Math.floor(Math.random() * 30)
+        let y = Math.floor(Math.random() * 30)
+
+// figure out how to set the damn board
+        // setBoard([
+        //     ...board,
+        //     board[x][]
+        // ])
+
+    }, [prep])
+
+    const startGame = () => {
+        setPrep(!prep)
+    }
+
     return (
         <>
+            <button 
+            className='start'
+            onClick={startGame}
+            >
+                { prep ? 'End' : 'Start' }
+            </button>
             <div className='grid'>
             {
                 board.map( (row, i) => (
@@ -39,7 +55,7 @@ const SnekBoard = () => {
             }
             </div>
 
-            <button className='start'>Start</button>
+            
         </>
     )
 }
