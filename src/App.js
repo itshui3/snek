@@ -7,7 +7,7 @@ import SnekBoard from './page/SnekBoard'
 
 function App() {
     return (
-        <div className="App">
+        <div className='App'>
             <SnekBoard />
         </div>
     );

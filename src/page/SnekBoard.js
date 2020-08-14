@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react'
+// style
+import './SnekBoard.css'
 
 const size = {
     x: 30,
@@ -20,7 +22,19 @@ const SnekBoard = () => {
 
     return (
         <>
-
+            <div className='grid'>
+            {
+                board.map( (row, i) => (
+                    <div className='grid_row'>
+                        {
+                            row.map( (cell, i) => (
+                                <div className='grid_cell'></div>
+                            ))
+                        }
+                    </div>
+                ))
+            }
+            </div>
         </>
     )
 }
