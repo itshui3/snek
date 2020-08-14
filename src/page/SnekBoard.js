@@ -20,6 +20,9 @@ const SnekBoard = () => {
         return buildBoard
     })
 
+    const [prep, setPrep] = useState(false)
+    const [snek, setSnek] = useState(false)
+
     return (
         <>
             <div className='grid'>
@@ -35,6 +38,8 @@ const SnekBoard = () => {
                 ))
             }
             </div>
+
+            <button className='start'>Start</button>
         </>
     )
 }
