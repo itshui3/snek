@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react'
+// style
+import './SnekBoard.css'
 
 const size = {
     x: 30,
@@ -12,18 +14,27 @@ const SnekBoard = () => {
         for (let j = 0; j < size['y']; j++) {
             buildBoard.push([])
             for (let i = 0; i < size['x']; i++) {
-                buildBoard[j].append('empty')
+                buildBoard[j].push(0)
             }
         }
+        return buildBoard
     })
-
-    useEffect(() => {
-        console.log(board)
-    }, [board])
 
     return (
         <>
-
+            <div className='grid'>
+            {
+                board.map( (row, i) => (
+                    <div className='grid_row'>
+                        {
+                            row.map( (cell, i) => (
+                                <div className='grid_cell'></div>
+                            ))
+                        }
+                    </div>
+                ))
+            }
+            </div>
         </>
     )
 }

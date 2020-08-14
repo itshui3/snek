@@ -1,0 +1,18 @@
+.grid {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    display: flex;
+
+}
+
+.grid_cell {
+    width: 15px;
+    height: 15px;
+
+    border: 1px solid grey;
+    margin: 1px;
+    border-radius: 5px;
+}
