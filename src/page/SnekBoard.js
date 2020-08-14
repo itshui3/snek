@@ -12,14 +12,11 @@ const SnekBoard = () => {
         for (let j = 0; j < size['y']; j++) {
             buildBoard.push([])
             for (let i = 0; i < size['x']; i++) {
-                buildBoard[j].append('empty')
+                buildBoard[j].push(0)
             }
         }
+        return buildBoard
     })
-
-    useEffect(() => {
-        console.log(board)
-    }, [board])
 
     return (
         <>
