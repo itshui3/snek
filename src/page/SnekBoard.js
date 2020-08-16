@@ -6,6 +6,26 @@ import {
     buildBoard as defaultBoard
 } from './assets/board'
 
+function genEdible(board) {
+    let x, y
+
+    do {
+        x = Math.floor(Math.random() * 30)
+        y = Math.floor(Math.random() * 30)
+    } while (board[y][x] !== 'empty')
+
+
+    let modBoard = []
+
+    for (let i = 0; i < board.length; i++) {
+        modBoard[i] = [...board[i]]
+    }
+
+    modBoard[y][x] = 'edible'
+
+    return modBoard
+}
+
 const SnekBoard = () => {
 
     const [board, setBoard] = useState(defaultBoard)
@@ -16,16 +36,10 @@ const SnekBoard = () => {
     useEffect(() => {
         if (!prep) {
             setBoard(defaultBoard)
+            return
         }
 
-        let x = Math.floor(Math.random() * 30)
-        let y = Math.floor(Math.random() * 30)
-
-// figure out how to set the damn board
-        // setBoard([
-        //     ...board,
-        //     board[x][]
-        // ])
+        setBoard((board) => genEdible(board))
 
     }, [prep])
 
@@ -43,11 +57,17 @@ const SnekBoard = () => {
             </button>
             <div className='grid'>
             {
-                board.map( (row, i) => (
-                    <div className='grid_row'>
+                board.map( (row, rowID) => (
+                    <div 
+                    key={rowID}
+                    className='grid_row'
+                    >
                         {
-                            row.map( (cell, i) => (
-                                <div className='grid_cell'></div>
+                            row.map( (cell, cellID) => (
+                                <div 
+                                key={cellID}
+                                className={`grid_cell ${cell}`}
+                                ></div>
                             ))
                         }
                     </div>

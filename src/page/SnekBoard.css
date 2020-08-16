@@ -22,3 +22,11 @@
     margin: 1px;
     border-radius: 5px;
 }
+
+.empty {
+    background-color: white;
+}
+
+.edible {
+    background-color: pink;
+}
