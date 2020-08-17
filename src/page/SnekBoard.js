@@ -5,6 +5,8 @@ import './SnekBoard.css'
 import {
     buildBoard as defaultBoard
 } from './assets/board'
+// compos
+import Cell from './Cell'
 
 function genEdible(board) {
     let x, y
@@ -26,6 +28,21 @@ function genEdible(board) {
     return modBoard
 }
 
+function putSnek(board, y, x) {
+
+    console.log(y, x)
+
+    let modBoard = []
+
+    for (let i = 0; i < board.length; i++) {
+        modBoard[i] = [...board[i]]
+    }
+
+    modBoard[y][x] = 'head'
+
+    return modBoard
+}
+
 const SnekBoard = () => {
 
     const [board, setBoard] = useState(defaultBoard)
@@ -36,6 +53,7 @@ const SnekBoard = () => {
     useEffect(() => {
         if (!prep) {
             setBoard(defaultBoard)
+            setSnek(false)
             return
         }
 
@@ -45,6 +63,12 @@ const SnekBoard = () => {
 
     const startGame = () => {
         setPrep(!prep)
+    }
+    
+    const placeSnek = (y, x) => {
+        if (snek) { return }
+        setBoard((board) => putSnek(board, y, x))
+        setSnek(true)
     }
 
     return (
@@ -64,10 +88,14 @@ const SnekBoard = () => {
                     >
                         {
                             row.map( (cell, cellID) => (
-                                <div 
+                                <Cell 
                                 key={cellID}
+                                rowID={rowID}
+                                cellID={cellID}
+                                cell={cell}
                                 className={`grid_cell ${cell}`}
-                                ></div>
+                                placeSnek={placeSnek}
+                                ></Cell>
                             ))
                         }
                     </div>
