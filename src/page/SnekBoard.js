@@ -1,47 +1,16 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 // style
 import './SnekBoard.css'
 // assets
+// assets[props]
 import {
     buildBoard as defaultBoard
 } from './assets/board'
+// assets[methods]
+import {genEdible} from './assets/genEdible'
+import {putSnek} from './assets/putSnek'
 // compos
 import Cell from './Cell'
-
-function genEdible(board) {
-    let x, y
-
-    do {
-        x = Math.floor(Math.random() * 30)
-        y = Math.floor(Math.random() * 30)
-    } while (board[y][x] !== 'empty')
-
-
-    let modBoard = []
-
-    for (let i = 0; i < board.length; i++) {
-        modBoard[i] = [...board[i]]
-    }
-
-    modBoard[y][x] = 'edible'
-
-    return modBoard
-}
-
-function putSnek(board, y, x) {
-
-    console.log(y, x)
-
-    let modBoard = []
-
-    for (let i = 0; i < board.length; i++) {
-        modBoard[i] = [...board[i]]
-    }
-
-    modBoard[y][x] = 'head'
-
-    return modBoard
-}
 
 const SnekBoard = () => {
 
