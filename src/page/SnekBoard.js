@@ -19,6 +19,11 @@ const SnekBoard = () => {
     const [prep, setPrep] = useState(false)
     const [snek, setSnek] = useState(false)
 
+    const window = useRef(document.window)
+    useEffect(() => {
+        console.log(window)
+    }, [])
+
     useEffect(() => {
         if (!prep) {
             setBoard(defaultBoard)
@@ -29,6 +34,10 @@ const SnekBoard = () => {
         setBoard((board) => genEdible(board))
 
     }, [prep])
+// I expect a snek-set state to tell users to select a direction
+    useEffect(() => {
+
+    }, [snek])
 
     const startGame = () => {
         setPrep(!prep)
@@ -36,6 +45,7 @@ const SnekBoard = () => {
     
     const placeSnek = (y, x) => {
         if (snek) { return }
+        if (!prep) { return }
         setBoard((board) => putSnek(board, y, x))
         setSnek(true)
     }
@@ -48,6 +58,11 @@ const SnekBoard = () => {
             >
                 { prep ? 'End' : 'Start' }
             </button>
+            <div
+            className='notification'
+            >
+                {prep && !snek && 'place snek'}
+            </div>
             <div className='grid'>
             {
                 board.map( (row, rowID) => (
