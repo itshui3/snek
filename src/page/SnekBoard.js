@@ -18,6 +18,7 @@ const SnekBoard = () => {
 
     const [prep, setPrep] = useState(false)
     const [snek, setSnek] = useState(false)
+    const [direction, setDirection] = useState(false)
 
     const window = useRef(document.window)
     useEffect(() => {
@@ -61,7 +62,15 @@ const SnekBoard = () => {
             <div
             className='notification'
             >
-                {prep && !snek && 'place snek'}
+                { 
+                !prep
+                ? 'Click Start to begin'
+                : prep && !snek 
+                ? 'Place ur snek boyo' 
+                : prep && snek && !direction
+                ? 'Move ur snek boyo [e(north), s(west), d(south), f(east)]'
+                : null
+                }
             </div>
             <div className='grid'>
             {
