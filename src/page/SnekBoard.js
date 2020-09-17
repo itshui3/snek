@@ -35,10 +35,6 @@ const SnekBoard = () => {
         setBoard((board) => genEdible(board))
 
     }, [prep])
-// I expect a snek-set state to tell users to select a direction
-    useEffect(() => {
-
-    }, [snek])
 
     const startGame = () => {
         setPrep(!prep)
@@ -49,6 +45,12 @@ const SnekBoard = () => {
         if (!prep) { return }
         setBoard((board) => putSnek(board, y, x))
         setSnek(true)
+    }
+
+    const setDir = (ev) => {
+        if (!prep || !snek) { return }
+
+        // grab direction from event from somewhere
     }
 
     return (
@@ -62,6 +64,7 @@ const SnekBoard = () => {
             <div
             className='notification'
             >
+                {/* build an element for movement keys that visibly depress when keyboard event fired */}
                 { 
                 !prep
                 ? 'Click Start to begin'
@@ -71,6 +74,7 @@ const SnekBoard = () => {
                 ? 'Move ur snek boyo [e(north), s(west), d(south), f(east)]'
                 : null
                 }
+
             </div>
             <div className='grid'>
             {
@@ -80,16 +84,16 @@ const SnekBoard = () => {
                     className='grid_row'
                     >
                         {
-                            row.map( (cell, cellID) => (
-                                <Cell 
-                                key={cellID}
-                                rowID={rowID}
-                                cellID={cellID}
-                                cell={cell}
-                                className={`grid_cell ${cell}`}
-                                placeSnek={placeSnek}
-                                ></Cell>
-                            ))
+                        row.map( (cell, cellID) => (
+                            <Cell 
+                            key={cellID}
+                            rowID={rowID}
+                            cellID={cellID}
+                            cell={cell}
+                            className={`grid_cell ${cell}`}
+                            placeSnek={placeSnek}
+                            ></Cell>
+                        ))
                         }
                     </div>
                 ))
