@@ -1,47 +1,16 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 // style
 import './SnekBoard.css'
 // assets
+// assets[props]
 import {
     buildBoard as defaultBoard
 } from './assets/board'
+// assets[methods]
+import {genEdible} from './assets/genEdible'
+import {putSnek} from './assets/putSnek'
 // compos
 import Cell from './Cell'
-
-function genEdible(board) {
-    let x, y
-
-    do {
-        x = Math.floor(Math.random() * 30)
-        y = Math.floor(Math.random() * 30)
-    } while (board[y][x] !== 'empty')
-
-
-    let modBoard = []
-
-    for (let i = 0; i < board.length; i++) {
-        modBoard[i] = [...board[i]]
-    }
-
-    modBoard[y][x] = 'edible'
-
-    return modBoard
-}
-
-function putSnek(board, y, x) {
-
-    console.log(y, x)
-
-    let modBoard = []
-
-    for (let i = 0; i < board.length; i++) {
-        modBoard[i] = [...board[i]]
-    }
-
-    modBoard[y][x] = 'head'
-
-    return modBoard
-}
 
 const SnekBoard = () => {
 
@@ -49,6 +18,12 @@ const SnekBoard = () => {
 
     const [prep, setPrep] = useState(false)
     const [snek, setSnek] = useState(false)
+    const [direction, setDirection] = useState(false)
+
+    const window = useRef(document.window)
+    useEffect(() => {
+        console.log(window)
+    }, [])
 
     useEffect(() => {
         if (!prep) {
@@ -67,8 +42,15 @@ const SnekBoard = () => {
     
     const placeSnek = (y, x) => {
         if (snek) { return }
+        if (!prep) { return }
         setBoard((board) => putSnek(board, y, x))
         setSnek(true)
+    }
+
+    const setDir = (ev) => {
+        if (!prep || !snek) { return }
+
+        // grab direction from event from somewhere
     }
 
     return (
@@ -79,6 +61,21 @@ const SnekBoard = () => {
             >
                 { prep ? 'End' : 'Start' }
             </button>
+            <div
+            className='notification'
+            >
+                {/* build an element for movement keys that visibly depress when keyboard event fired */}
+                { 
+                !prep
+                ? 'Click Start to begin'
+                : prep && !snek 
+                ? 'Place ur snek boyo' 
+                : prep && snek && !direction
+                ? 'Move ur snek boyo [e(north), s(west), d(south), f(east)]'
+                : null
+                }
+
+            </div>
             <div className='grid'>
             {
                 board.map( (row, rowID) => (
@@ -87,16 +84,16 @@ const SnekBoard = () => {
                     className='grid_row'
                     >
                         {
-                            row.map( (cell, cellID) => (
-                                <Cell 
-                                key={cellID}
-                                rowID={rowID}
-                                cellID={cellID}
-                                cell={cell}
-                                className={`grid_cell ${cell}`}
-                                placeSnek={placeSnek}
-                                ></Cell>
-                            ))
+                        row.map( (cell, cellID) => (
+                            <Cell 
+                            key={cellID}
+                            rowID={rowID}
+                            cellID={cellID}
+                            cell={cell}
+                            className={`grid_cell ${cell}`}
+                            placeSnek={placeSnek}
+                            ></Cell>
+                        ))
                         }
                     </div>
                 ))
