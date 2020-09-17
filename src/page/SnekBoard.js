@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react'
+// utility
+import KeyBoardEventHandler from 'react-keyboard-event-handler'
 // style
 import './SnekBoard.css'
 // assets
@@ -47,9 +49,18 @@ const SnekBoard = () => {
         setSnek(true)
     }
 
-    const setDir = (ev) => {
+    const setDir = (key, ev) => {
         if (!prep || !snek) { return }
+        console.log('key: ', key)
+        setDirection((dir) => {
 
+            if (key === 'e') return 'e'
+            if (key === 's') return 's'
+            if (key === 'd') return 'd'
+            if (key === 'f') return 'f'
+
+            return dir
+        })
         // grab direction from event from somewhere
     }
 
@@ -76,6 +87,11 @@ const SnekBoard = () => {
                 }
 
             </div>
+            {/* directions controller */}
+            <KeyBoardEventHandler 
+            handleKeys={['e', 's', 'd', 'f']}
+            onKeyEvent={(key, ev) => setDir(key, ev)}
+            />
             <div className='grid'>
             {
                 board.map( (row, rowID) => (
@@ -99,8 +115,6 @@ const SnekBoard = () => {
                 ))
             }
             </div>
-
-            
         </>
     )
 }
