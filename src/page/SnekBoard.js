@@ -15,7 +15,7 @@ import {putSnek} from './assets/putSnek'
 import Cell from './Cell'
 
 const SnekBoard = () => {
-
+// will immer's setState cause a refresh where the useEffect[board, dir] will notice? 
     const [board, setBoard] = useState(defaultBoard)
 
     const [prep, setPrep] = useState(false)
@@ -45,7 +45,7 @@ const SnekBoard = () => {
             dir === 'd' ||
             dir === 'f'
         ) {
-            // moveSnek()
+            // const newBoard = moveSnek(snek, board, dir)
         }
     }, [dir])
 
@@ -57,7 +57,7 @@ const SnekBoard = () => {
         if (snek) { return }
         if (!prep) { return }
         setBoard((board) => putSnek(board, y, x))
-        setSnek(true)
+        setSnek([y, x])
     }
 
     const setDirection = (key, ev) => {
