@@ -2,6 +2,7 @@ import React from 'react';
 
 // util
 import {BrowserRouter as Router, Route, Redirect}from 'react-router-dom'
+import {enableMapSet} from 'immer'
 
 // style
 import './App.css';
@@ -12,8 +13,9 @@ const appStyle = {
     display: 'flex',
     flexDirection: 'column'
 }
-
+enableMapSet()
 function App() {
+
     return (
         <Router>
             <div 

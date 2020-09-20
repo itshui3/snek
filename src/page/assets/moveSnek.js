@@ -11,37 +11,40 @@ function moveSnek(head, board, dir) {
 
     let newBoard = JSON.parse(JSON.stringify(board))
 
+    let newPos = []
+
     // return same board or throw an error[compare trade-offs]
     if (dir === 'n') {
         if (headR === 0) return board
-        newBoard[headR][headC] = 0
+        newBoard[headR][headC] = 'empty'
         newBoard[headR - 1][headC] = 'head'
-
+        newPos = [headR - 1, headC]
         return newBoard
     }
 
     if (dir === 'e') {
         if (headC === lastCol) return board
-        newBoard[headR][headC] = 0
+        newBoard[headR][headC] = 'empty'
         newBoard[headR][headC + 1] = 'head'
-
+        newPos = [headR, headC + 1]
         return newBoard
     }
 
     if (dir === 's') {
         if (headR === lastRow) return board
-        newBoard[headR][headC] = 0
+        newBoard[headR][headC] = 'empty'
         newBoard[headR + 1][headC] = 'head'
-
+        newPos = [headR + 1, headC]
         return newBoard
     }
 
     if (dir === 'w') {
         if (headC === 0) return board
-        newBoard[headR][headC] = 0
+        newBoard[headR][headC] = 'empty'
         newBoard[headR][headC - 1] = 'head'
-
-        return newBoard
+        newPos = [headR, headC - 1]
+        
+        return [newBoard, newPos]
     }
 }
 

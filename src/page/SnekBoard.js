@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 // utility
 import KeyBoardEventHandler from 'react-keyboard-event-handler'
+import produce from 'immer'
 // style
 import './SnekBoard.css'
 // assets
@@ -11,6 +12,7 @@ import {
 // assets[methods]
 import {genEdible} from './assets/genEdible'
 import {putSnek} from './assets/putSnek'
+import {moveSnek} from './assets/moveSnek'
 // compos
 import Cell from './Cell'
 
@@ -45,7 +47,19 @@ const SnekBoard = () => {
             dir === 'd' ||
             dir === 'f'
         ) {
-            // const newBoard = moveSnek(snek, board, dir)
+            console.log('board', board)
+            setBoard((board) => {
+                let newBoard = produce(
+                    board, draft => {
+                        let [newDraft, newPos] = moveSnek(snek, draft, dir)
+                        draft = newDraft
+                        setSnek(newPos)
+                        console.log('draft', draft)
+                    }
+                )
+                return newBoard
+            }
+)
         }
     }, [dir])
 
