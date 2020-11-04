@@ -23,12 +23,15 @@ const SnekBoard = () => {
     const [prep, setPrep] = useState(false)
     const [snek, setSnek] = useState(false)
     const [dir, setDir] = useState(false)
+    const [intClearer, setIntClearer] = useState(false)
 
     const window = useRef(document.window)
     useEffect(() => {
         console.log(window)
     }, [])
-
+// my prep set-up is a bit unorganized. 
+// I should find some way to write it such that it's easier to read 
+// while still taking care of things sequentially
     useEffect(() => {
         if (!prep) {
             setBoard(defaultBoard)
@@ -40,31 +43,34 @@ const SnekBoard = () => {
 
     }, [prep])
 
-    useEffect(() => {
-        if (
-            dir === 'e' ||
-            dir === 's' ||
-            dir === 'd' ||
-            dir === 'f'
-        ) {
-            console.log('board', board)
-            setBoard((board) => {
-                let newBoard = produce(
-                    board, draft => {
-                        let [newDraft, newPos] = moveSnek(snek, draft, dir)
-                        draft = newDraft
-                        setSnek(newPos)
-                        console.log('draft', draft)
-                    }
-                )
-                return newBoard
-            }
-)
-        }
-    }, [dir])
+    // useEffect(() => {
+    //     if (
+    //         dir === 'e' ||
+    //         dir === 's' ||
+    //         dir === 'd' ||
+    //         dir === 'f'
+    //     ) {
+            
+    //         let intervalID = setInterval(() => {
+    //             // moveBoard
+    //         }, 500)
+
+    //         let clear = () => {
+    //             clearInterval(intervalID)
+    //         }
+
+    //         setIntClearer(clear)
+    //     }
+
+    //     return intClearer()
+    // }, [dir])
 
     const startGame = () => {
         setPrep(!prep)
+    }
+
+    const endGame = () => {
+        intClearer()
     }
     
     const placeSnek = (y, x) => {
