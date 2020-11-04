@@ -101,7 +101,9 @@ def move_snake(matrix, direction, pos, length):
     if not check_input(matrix, direction, pos, length):
         return 'input not recognized, check args types and structure'
 
-    if pop_head(matrix, direction, pos) == 'snek_dead':
+    working_matrix = [row[:] for row in matrix]
+
+    if pop_head(working_matrix, direction, pos) == 'snek_dead':
         return 'snek_dead'
 
     # Starting at the previous head, we begin updating the values of the body so matrix reflects the snake's next position
@@ -109,10 +111,10 @@ def move_snake(matrix, direction, pos, length):
     running_pos = [ pos[0], pos[1] ]
 
     while not body_num > length:
-        running_pos = search_and_update(matrix, running_pos, body_num)
+        running_pos = search_and_update(working_matrix, running_pos, body_num)
         body_num += 1
     
     # destroy should work to not break any pieces if snake's current move also consumes a food
-    destroy(matrix, running_pos, body_num)
+    destroy(working_matrix, running_pos, body_num)
 
-    return matrix
+    return working_matrix
