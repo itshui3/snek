@@ -13,7 +13,7 @@ function putSnek(board, y, x) {
         nextBoard[i] = [...curRow]
     }
 // what if I just use immer and modify that point to be head? 
-    nextBoard[y][x] = 'head'
+    nextBoard[y][x] = 'snek'
 
     return nextBoard
 }

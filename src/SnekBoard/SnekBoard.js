@@ -12,7 +12,7 @@ import {
 // assets[methods]
 import {genEdible} from './assets/genEdible'
 import {putSnek} from './assets/putSnek'
-import {moveSnek} from './assets/moveSnek'
+import {updateSnek} from './assets/updateSnek'
 // compos
 import Cell from './Cell/Cell'
 
@@ -21,7 +21,7 @@ const SnekBoard = () => {
     const [board, setBoard] = useState(defaultBoard)
 
     const [prep, setPrep] = useState(false)
-    const [snekHead, setSnekHead] = useState(false)
+    const [snek, setSnek] = useState(false)
     const [dir, setDir] = useState(false)
     const [intClearer, setIntClearer] = useState(false)
 
@@ -35,7 +35,7 @@ const SnekBoard = () => {
     useEffect(() => {
         if (!prep) {
             setBoard(defaultBoard)
-            setSnekHead(false)
+            setSnek(false)
             return
         }
 
@@ -44,10 +44,61 @@ const SnekBoard = () => {
     }, [prep])
 
 // movement logic
+// currently whenever dir is changed, snek should move
     useEffect(() => {
         if (!dir) {return}
 
-        moveSnek(snekHead, board, dir)
+        // let nextSnek = updateSnek(snek, board, dir)
+        console.log('snek', snek)
+        // snekParts : [y, x] y first because we do [row][col] in nested matrix
+        const dirMods = {
+            'n': [-1, 0],
+            'e': [0, 1],
+            's': [1, 0],
+            'w': [0, -1]
+        }
+
+        let rowMod = dirMods[dir][0]
+        let colMod = dirMods[dir][1]
+
+        let moveToRow = snek[snek.length-1][0] + rowMod
+        let moveToCol = snek[snek.length-1][1] + colMod
+
+        if (
+            moveToRow < 0 || moveToRow >= board.length
+            ||
+            moveToCol < 0 || moveToCol >= board[0].length
+        )
+            { throw new Error(`Attempt to move to row: ${moveToRow}, col: ${moveToCol} failed`) }
+
+        let consume = false
+        if (board[moveToRow][moveToCol] === 'edible') { consume = true }
+
+        let nextSnek = new Array(consume ? snek.length+1 : snek.length)
+
+        for (let i = 0; i < snek.length; i++) {
+            if (i === 0 && consume) {
+                nextSnek.push(snek[i])
+            }
+            if (i === 0) { continue }
+
+            if (i !== 0) {
+                nextSnek.push(snek[i])
+            }
+        }
+        
+        nextSnek[consume ? snek.length : snek.length-1] = [moveToRow, moveToCol]
+        // take prev snek stuff off new board
+        let copyBoard = JSON.parse(JSON.stringify(board))
+        for (let i = 0; i < snek.length; i++) {
+            copyBoard[snek[i][0]][snek[i][1]] = 'empty'
+        }
+        for (let i = 0; i < nextSnek.length; i++) {
+            copyBoard[nextSnek[i][0]][snek[i][1]] = 'snek'
+        }
+
+        setSnek(nextSnek)
+        setBoard(copyBoard)
 
     }, [dir])
 
@@ -60,14 +111,14 @@ const SnekBoard = () => {
     }
     
     const placeSnek = (y, x) => {
-        if (snekHead) { return }
+        if (snek) { return }
         if (!prep) { return }
         setBoard((board) => putSnek(board, y, x))
-        setSnekHead([y, x])
+        setSnek([[y, x]])
     }
 
     const setDirection = (key, ev) => {
-        if (!prep || !snekHead) { return }
+        if (!prep || !snek) { return }
 
         setDir((dir) => {
 
@@ -96,9 +147,9 @@ const SnekBoard = () => {
                 { 
                 !prep
                 ? 'Click Start to begin'
-                : prep && !snekHead 
+                : prep && !snek 
                 ? 'Place ur snek boyo' 
-                : prep && snekHead && !dir
+                : prep && snek && !dir
                 ? 'Move ur snek boyo [e(north), s(west), d(south), f(east)]'
                 : null
                 }
