@@ -13,12 +13,15 @@ import {
 import {genEdible} from './assets/genEdible'
 import {putSnek} from './assets/putSnek'
 import {updateSnek} from './assets/updateSnek'
+import {validateMove} from './assets/validateMove'
 // compos
 import Cell from './Cell/Cell'
 
+const boardSize = [10, 10]
+
 const SnekBoard = () => {
 // will immer's setState cause a refresh where the useEffect[board, dir] will notice? 
-    const [board, setBoard] = useState(defaultBoard)
+    const [board, setBoard] = useState(() => defaultBoard(boardSize))
 
     const [prep, setPrep] = useState(false)
     const [snek, setSnek] = useState(false)
@@ -32,12 +35,12 @@ const SnekBoard = () => {
 // while still taking care of things sequentially
     useEffect(() => {
         if (!prep) {
-            setBoard(defaultBoard)
+            setBoard(defaultBoard(boardSize))
             setSnek(false)
             return
         }
 
-        setBoard((board) => genEdible(board))
+        setBoard((board) => genEdible(board, boardSize))
 
     }, [prep])
 
@@ -45,8 +48,13 @@ const SnekBoard = () => {
 // currently whenever dir is changed, snek should move
     useEffect(() => {
         if (!dir) {return}
+        const {consume, moveTo} = validateMove(snek, board, dir)
 
-        let nextSnek = updateSnek(snek, board, dir)
+        let nextSnek = updateSnek(
+            snek, 
+            consume, 
+            moveTo
+        )
 
         setSnek(nextSnek)
 
@@ -56,6 +64,9 @@ const SnekBoard = () => {
             let curCol = snek[i][1]
 
             copyBoard[curRow][curCol] = 'empty'
+        }
+        if (consume) {
+            copyBoard = genEdible(copyBoard, boardSize)
         }
         setBoard(copyBoard)
 
