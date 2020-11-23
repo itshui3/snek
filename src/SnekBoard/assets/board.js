@@ -1,6 +1,6 @@
 const size = {
-    x: 30,
-    y: 30
+    x: 10,
+    y: 10
 }
 
 let buildBoard = []

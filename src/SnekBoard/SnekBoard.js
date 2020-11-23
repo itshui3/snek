@@ -12,9 +12,9 @@ import {
 // assets[methods]
 import {genEdible} from './assets/genEdible'
 import {putSnek} from './assets/putSnek'
-import {moveSnek} from './assets/moveSnek'
+import {updateSnek} from './assets/updateSnek'
 // compos
-import Cell from './Cell'
+import Cell from './Cell/Cell'
 
 const SnekBoard = () => {
 // will immer's setState cause a refresh where the useEffect[board, dir] will notice? 
@@ -26,9 +26,7 @@ const SnekBoard = () => {
     const [intClearer, setIntClearer] = useState(false)
 
     const window = useRef(document.window)
-    useEffect(() => {
-        console.log(window)
-    }, [])
+
 // my prep set-up is a bit unorganized. 
 // I should find some way to write it such that it's easier to read 
 // while still taking care of things sequentially
@@ -43,56 +41,66 @@ const SnekBoard = () => {
 
     }, [prep])
 
-    // useEffect(() => {
-    //     if (
-    //         dir === 'e' ||
-    //         dir === 's' ||
-    //         dir === 'd' ||
-    //         dir === 'f'
-    //     ) {
-            
-    //         let intervalID = setInterval(() => {
-    //             // moveBoard
-    //         }, 500)
+// movement logic
+// currently whenever dir is changed, snek should move
+    useEffect(() => {
+        if (!dir) {return}
 
-    //         let clear = () => {
-    //             clearInterval(intervalID)
-    //         }
+        let nextSnek = updateSnek(snek, board, dir)
 
-    //         setIntClearer(clear)
-    //     }
+        setSnek(nextSnek)
 
-    //     return intClearer()
-    // }, [dir])
+        let copyBoard = JSON.parse(JSON.stringify(board))
+        for (let i = 0; i < snek.length; i++) {
+            let curRow = snek[i][0]
+            let curCol = snek[i][1]
+
+            copyBoard[curRow][curCol] = 'empty'
+        }
+        setBoard(copyBoard)
+
+    }, [dir])
+
+    useEffect(() => {
+        console.log('snek', snek)
+        let copyBoard = JSON.parse(JSON.stringify(board))
+
+        for (let i = 0; i < snek.length; i++) {
+            let curRow = snek[i][0]
+            let curCol = snek[i][1]
+
+            copyBoard[curRow][curCol] = 'snek'
+        }
+
+        setBoard(copyBoard)
+        console.log('snek after update', snek)
+
+    }, [snek])
 
     const startGame = () => {
         setPrep(!prep)
-    }
-
-    const endGame = () => {
-        intClearer()
     }
     
     const placeSnek = (y, x) => {
         if (snek) { return }
         if (!prep) { return }
         setBoard((board) => putSnek(board, y, x))
-        setSnek([y, x])
+        setSnek([[y, x]])
     }
 
     const setDirection = (key, ev) => {
         if (!prep || !snek) { return }
-        console.log('key: ', key)
+
         setDir((dir) => {
 
-            if (key === 'e') return 'e'
-            if (key === 's') return 's'
-            if (key === 'd') return 'd'
-            if (key === 'f') return 'f'
+            if (key === 'e') return 'n'
+            if (key === 's') return 'w'
+            if (key === 'd') return 's'
+            if (key === 'f') return 'e'
 
             return dir
         })
-        // grab direction from event from somewhere
+
     }
 
     return (
@@ -125,6 +133,8 @@ const SnekBoard = () => {
             />
             <div className='grid'>
             {
+                board 
+                ? 
                 board.map( (row, rowID) => (
                     <div 
                     key={rowID}
@@ -144,6 +154,8 @@ const SnekBoard = () => {
                         }
                     </div>
                 ))
+                :
+                null
             }
             </div>
         </>

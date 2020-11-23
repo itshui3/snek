@@ -7,7 +7,7 @@ import {enableMapSet} from 'immer'
 // style
 import './App.css';
 // compos
-import SnekBoard from './page/SnekBoard'
+import SnekBoard from './SnekBoard/SnekBoard'
 
 const appStyle = {
     display: 'flex',
