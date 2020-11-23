@@ -26,9 +26,7 @@ const SnekBoard = () => {
     const [intClearer, setIntClearer] = useState(false)
 
     const window = useRef(document.window)
-    useEffect(() => {
-        console.log(window)
-    }, [])
+
 // my prep set-up is a bit unorganized. 
 // I should find some way to write it such that it's easier to read 
 // while still taking care of things sequentially
@@ -48,66 +46,39 @@ const SnekBoard = () => {
     useEffect(() => {
         if (!dir) {return}
 
-        // let nextSnek = updateSnek(snek, board, dir)
-        console.log('snek', snek)
-        // snekParts : [y, x] y first because we do [row][col] in nested matrix
-        const dirMods = {
-            'n': [-1, 0],
-            'e': [0, 1],
-            's': [1, 0],
-            'w': [0, -1]
-        }
-
-        let rowMod = dirMods[dir][0]
-        let colMod = dirMods[dir][1]
-
-        let moveToRow = snek[snek.length-1][0] + rowMod
-        let moveToCol = snek[snek.length-1][1] + colMod
-
-        if (
-            moveToRow < 0 || moveToRow >= board.length
-            ||
-            moveToCol < 0 || moveToCol >= board[0].length
-        )
-            { throw new Error(`Attempt to move to row: ${moveToRow}, col: ${moveToCol} failed`) }
-
-        let consume = false
-        if (board[moveToRow][moveToCol] === 'edible') { consume = true }
-
-        let nextSnek = new Array(consume ? snek.length+1 : snek.length)
-
-        for (let i = 0; i < snek.length; i++) {
-            if (i === 0 && consume) {
-                nextSnek.push(snek[i])
-            }
-            if (i === 0) { continue }
-
-            if (i !== 0) {
-                nextSnek.push(snek[i])
-            }
-        }
-        
-        nextSnek[consume ? snek.length : snek.length-1] = [moveToRow, moveToCol]
-        // take prev snek stuff off new board
-        let copyBoard = JSON.parse(JSON.stringify(board))
-        for (let i = 0; i < snek.length; i++) {
-            copyBoard[snek[i][0]][snek[i][1]] = 'empty'
-        }
-        for (let i = 0; i < nextSnek.length; i++) {
-            copyBoard[nextSnek[i][0]][snek[i][1]] = 'snek'
-        }
+        let nextSnek = updateSnek(snek, board, dir)
 
         setSnek(nextSnek)
+
+        let copyBoard = JSON.parse(JSON.stringify(board))
+        for (let i = 0; i < snek.length; i++) {
+            let curRow = snek[i][0]
+            let curCol = snek[i][1]
+
+            copyBoard[curRow][curCol] = 'empty'
+        }
         setBoard(copyBoard)
 
     }, [dir])
 
+    useEffect(() => {
+        console.log('snek', snek)
+        let copyBoard = JSON.parse(JSON.stringify(board))
+
+        for (let i = 0; i < snek.length; i++) {
+            let curRow = snek[i][0]
+            let curCol = snek[i][1]
+
+            copyBoard[curRow][curCol] = 'snek'
+        }
+
+        setBoard(copyBoard)
+        console.log('snek after update', snek)
+
+    }, [snek])
+
     const startGame = () => {
         setPrep(!prep)
-    }
-
-    const endGame = () => {
-        intClearer()
     }
     
     const placeSnek = (y, x) => {
@@ -129,7 +100,7 @@ const SnekBoard = () => {
 
             return dir
         })
-        // grab direction from event from somewhere
+
     }
 
     return (
@@ -162,6 +133,8 @@ const SnekBoard = () => {
             />
             <div className='grid'>
             {
+                board 
+                ? 
                 board.map( (row, rowID) => (
                     <div 
                     key={rowID}
@@ -181,6 +154,8 @@ const SnekBoard = () => {
                         }
                     </div>
                 ))
+                :
+                null
             }
             </div>
         </>

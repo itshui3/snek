@@ -11,35 +11,47 @@ function updateSnek(snek, board, dir) {
     }
 
     let rowMod = dirMods[dir][0]
+    console.log('rowMod', rowMod)
     let colMod = dirMods[dir][1]
+    console.log('colMod', colMod)
 
     let moveToRow = snek[snek.length-1][0] + rowMod
     let moveToCol = snek[snek.length-1][1] + colMod
+    console.log('moveToRow: ' + moveToRow, 'moveToCol: ' + moveToCol)
 
-    if (
-        moveToRow < 0 || moveToRow >= board.length
-        ||
-        moveToCol < 0 || moveToCol >= board[0].length
-    )
-        { throw new Error(`Attempt to move to row: ${moveToRow}, col: ${moveToCol} failed`) }
+    // boundary collision handling
+    // if (
+    //     moveToRow < 0 || moveToRow >= board.length
+    //     ||
+    //     moveToCol < 0 || moveToCol >= board[0].length
+    // ) {  }
 
     let consume = false
     if (board[moveToRow][moveToCol] === 'edible') { consume = true }
 
-    let nextSnek = new Array(consume ? snek.length+1 : snek.length)
+    let nextSnekLength = consume ? snek.length+1 : snek.length
+    let nextSnek = new Array(nextSnekLength)
 
+    // the logic below doesn't account for a growing snake. 
+    // the snake can grow, but the movement after growth 
     for (let i = 0; i < snek.length; i++) {
         if (i === 0 && consume) {
-            nextSnek.push(snek[i])
+            nextSnek[i] = snek[i]
         }
         if (i === 0) { continue }
 
-        if (i !== 0) {
-            nextSnek.push(snek[i])
+        if (i !== 0 && consume) {
+            nextSnek[i] = snek[i]
+            
+        } else if (i !== 0 && !consume) {
+            nextSnek[i-1] = snek[i]
         }
     }
-
-    nextSnek.push([moveToRow, moveToCol])
+    if (consume) {
+        nextSnek[snek.length] = [moveToRow, moveToCol]
+    } else {
+        nextSnek[snek.length-1] = [moveToRow, moveToCol]
+    }
 
     return nextSnek
 }

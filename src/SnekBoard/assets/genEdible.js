@@ -2,8 +2,8 @@ function genEdible(board) {
     let x, y
 
     do {
-        x = Math.floor(Math.random() * 30)
-        y = Math.floor(Math.random() * 30)
+        x = Math.floor(Math.random() * 10)
+        y = Math.floor(Math.random() * 10)
     } while (board[y][x] !== 'empty')
 
 
