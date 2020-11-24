@@ -73,7 +73,7 @@ const SnekBoard = () => {
     }, [dir])
 
     useEffect(() => {
-        console.log('snek', snek)
+
         let copyBoard = JSON.parse(JSON.stringify(board))
 
         for (let i = 0; i < snek.length; i++) {
@@ -82,11 +82,13 @@ const SnekBoard = () => {
 
             copyBoard[curRow][curCol] = 'snek'
         }
-
+        console.log('board', board)
         setBoard(copyBoard)
-        console.log('snek after update', snek)
-
     }, [snek])
+
+    useEffect(() => {
+        console.log('board after update', board)
+    }, [board])
 
     const startGame = () => {
         setPrep(!prep)
