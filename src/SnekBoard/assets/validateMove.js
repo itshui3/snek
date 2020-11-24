@@ -16,12 +16,9 @@ function validateMove(snek, board, dir) {
     let moveToCol = snek[snek.length-1][1] + colMod
     console.log('moveToRow: ' + moveToRow, 'moveToCol: ' + moveToCol)
 
-    let consume = false
-    if (board[moveToRow][moveToCol] === 'edible') { consume = true }
-
 
     return {
-        consume: consume,
+        // consume: consume,
         moveTo: [moveToRow, moveToCol]
     }
 }
