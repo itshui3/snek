@@ -23,39 +23,23 @@ const SnekBoard = () => {
 // will immer's setState cause a refresh where the useEffect[board, dir] will notice? 
     const [board, setBoard] = useState(() => defaultBoard(boardSize))
 
+    // gameState -> false -> 'moving' -> 'end'
     const [gameState, setGameState] = useState(false)
     const [snek, setSnek] = useState(false)
     const [dir, setDir] = useState(false)
     const [intClearer, setIntClearer] = useState(false)
 
-    const window = useRef(document.window)
-
 // my gameState set-up is a bit unorganized. 
 // I should find some way to write it such that it's easier to read 
 // while still taking care of things sequentially
-    useEffect(() => {
-        if (!gameState) {
-            setBoard(defaultBoard(boardSize))
-            setSnek(false)
-            return
-        }
-        if (gameState !== 'end') {
-            setBoard((board) => genEdible(board, boardSize))
-        }
-        
-
-    }, [gameState])
-
-// movement logic
-// currently whenever dir is changed, snek should move
-    useEffect(() => {
-        if (!dir || !gameState || gameState === 'end') {return}
+    const iterateMovement = () => {
+        if (gameState !== 'moving') { return }
         const {moveTo} = validateMove(snek, board, dir)
 
         let validateMovement = true
         // [1] check that moveTo is within grid
         if (
-            moveTo[0] >= board.length 
+            moveTo[0] >= board.length
             || 
             moveTo[0] < 0
             ||
@@ -99,10 +83,35 @@ const SnekBoard = () => {
             copyBoard = genEdible(copyBoard, boardSize)
         }
         setBoard(copyBoard)
+    }
 
+    useEffect(() => {
+        console.log('gameState', gameState)
+        if (!gameState) {
+            setBoard(defaultBoard(boardSize))
+            setSnek(false)
+            if (intClearer) {clearInterval(intClearer)}
+            return
+        }
 
+        if (gameState && gameState !== 'moving') {
+            setBoard((board) => genEdible(board, boardSize))
+        }
+    
+        if (gameState === 'moving') {
+            let movementClearer = setInterval(() => {
+                iterateMovement()
+                console.log(iterateMovement)
+            }, 500)
+            console.log(movementClearer)
+            setIntClearer(movementClearer)
+        }
 
-    }, [dir])
+        if (gameState === 'end') {
+            if (intClearer) {clearInterval(intClearer)}
+        }
+        
+    }, [gameState])
 
     useEffect(() => {
 
@@ -130,7 +139,6 @@ const SnekBoard = () => {
         } else if (!gameState) {
             setGameState(!gameState)
         }
-        
     }
     
     const placeSnek = (y, x) => {
@@ -189,7 +197,10 @@ const SnekBoard = () => {
             {/* directions controller */}
             <KeyBoardEventHandler 
             handleKeys={['e', 's', 'd', 'f']}
-            onKeyEvent={(key, ev) => setDirection(key, ev)}
+            onKeyEvent={(key, ev) => {
+                setDirection(key, ev)
+                setGameState('moving')
+            }}
             />
             <div className='grid'>
             {
