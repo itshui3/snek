@@ -18,7 +18,6 @@ function validateMove(snek, board, dir) {
 
 
     return {
-        // consume: consume,
         moveTo: [moveToRow, moveToCol]
     }
 }

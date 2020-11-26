@@ -14,6 +14,7 @@ import {genEdible} from './assets/genEdible'
 import {putSnek} from './assets/putSnek'
 import {updateSnek} from './assets/updateSnek'
 import {validateMove} from './assets/validateMove'
+import {fetchFreshState} from './assets/fetchFreshState'
 // compos
 import Cell from './Cell/Cell'
 
@@ -28,62 +29,12 @@ const SnekBoard = () => {
     const [snek, setSnek] = useState(false)
     const [dir, setDir] = useState(false)
     const [intClearer, setIntClearer] = useState(false)
+    const [edibles, setEdibles] = useState(0)
+    const [maxEdibles, setMaxEdibles] = useState(1)
 
 // my gameState set-up is a bit unorganized. 
 // I should find some way to write it such that it's easier to read 
 // while still taking care of things sequentially
-    const iterateMovement = () => {
-        if (gameState !== 'moving') { return }
-        const {moveTo} = validateMove(snek, board, dir)
-
-        let validateMovement = true
-        // [1] check that moveTo is within grid
-        if (
-            moveTo[0] >= board.length
-            || 
-            moveTo[0] < 0
-            ||
-            moveTo[1] >= board[0].length
-            ||
-            moveTo[1] < 0
-            ) {
-            // can't make this move
-            setGameState('end')
-            validateMovement = false
-            return
-        }
-        // [2] check that moveTo is not moving to a snek
-        if (board[moveTo[0]][moveTo[1]] === 'snek') {
-            setGameState('end')
-            validateMovement = false
-            return
-        }
-
-        let consume = false
-        if (board[moveTo[0]][moveTo[1]] === 'edible') { 
-            consume = true 
-        }
-        
-        let nextSnek = updateSnek(
-            snek, 
-            consume, 
-            moveTo
-        )
-
-        setSnek(nextSnek)
-
-        let copyBoard = JSON.parse(JSON.stringify(board))
-        for (let i = 0; i < snek.length; i++) {
-            let curRow = snek[i][0]
-            let curCol = snek[i][1]
-
-            copyBoard[curRow][curCol] = 'empty'
-        }
-        if (consume) {
-            copyBoard = genEdible(copyBoard, boardSize)
-        }
-        setBoard(copyBoard)
-    }
 
     useEffect(() => {
         console.log('gameState', gameState)
@@ -96,14 +47,46 @@ const SnekBoard = () => {
 
         if (gameState && gameState !== 'moving') {
             setBoard((board) => genEdible(board, boardSize))
+            setEdibles(1)
         }
     
         if (gameState === 'moving') {
             let movementClearer = setInterval(() => {
-                iterateMovement()
-                console.log(iterateMovement)
+
+                // I  can write a cool-ass helper function that 'wraps' stateSetters
+                const [dir, board, snek] = fetchFreshState([setDir, setBoard, setSnek])
+
+                    const { moveTo } = validateMove(snek, board, dir)
+                    // check if I can make this move, end game if can't
+                    if(!endGame(board, moveTo)) {
+                        setGameState('end')
+                        setIntClearer(intClearer => {
+                            if(intClearer) {
+                                clearInterval(intClearer)
+                            }
+                            return false
+                        })
+                    } else {
+                        let consume = false; 
+
+
+                        setEdibles(edibles => {
+                            if (board[moveTo[0]][moveTo[1]] === 'edible') {
+                                consume = true
+                                return edibles - 1
+                            } else {
+                                return edibles
+                            }
+                        })
+                        
+
+                        setBoard(resetBoard(board, snek))
+
+                        setSnek(updateSnek(snek, consume, moveTo))
+                        setDir(dir)
+                    }
             }, 500)
-            console.log(movementClearer)
+
             setIntClearer(movementClearer)
         }
 
@@ -114,7 +97,7 @@ const SnekBoard = () => {
     }, [gameState])
 
     useEffect(() => {
-
+        console.log('board snek error', snek, board)
         let copyBoard = JSON.parse(JSON.stringify(board))
 
         for (let i = 0; i < snek.length; i++) {
@@ -123,13 +106,76 @@ const SnekBoard = () => {
 
             copyBoard[curRow][curCol] = 'snek'
         }
-        console.log('board', board)
+
         setBoard(copyBoard)
     }, [snek])
 
     useEffect(() => {
-        console.log('board after update', board)
-    }, [board])
+
+        if (edibles < maxEdibles) {
+            setBoard((board) => genEdible(board, boardSize))
+            setEdibles((edibles) => edibles + 1)
+        }
+
+    }, [edibles])
+
+    const endGame = (board, moveTo) => {
+
+        if (
+            moveTo[0] >= board.length
+            || 
+            moveTo[0] < 0
+            ||
+            moveTo[1] >= board[0].length
+            ||
+            moveTo[1] < 0
+            ) {
+            return false
+        }
+
+        if (board[moveTo[0]][moveTo[1]] === 'snek') {
+            return false
+        }
+
+        return true
+    }
+
+    const moveSnek = (board, snek, moveTo) => {
+
+        let consume = false
+
+        setEdibles((edibles) => {
+            if (board[moveTo[0]][moveTo[1]] === 'edible') {
+                consume = true
+                return edibles - 1
+            } else {
+                return edibles
+            }
+        })
+        
+        return updateSnek(snek, consume, moveTo)
+    }
+
+    const resetBoard = (board, snek) => {
+        // [2] adjust board
+        let copyBoard = JSON.parse(JSON.stringify(board))
+
+        for (let i = 0; i < snek.length; i++) {
+            let curRow = snek[i][0]
+            let curCol = snek[i][1]
+
+            copyBoard[curRow][curCol] = 'empty'
+        }
+
+        if (edibles < maxEdibles) {
+            copyBoard = genEdible(copyBoard, boardSize)
+            setEdibles((edibles) => {
+                return edibles + 1
+            })
+        }
+
+        return copyBoard
+    }
 
     const startGame = () => {
         if (gameState === 'end') {
@@ -199,7 +245,9 @@ const SnekBoard = () => {
             handleKeys={['e', 's', 'd', 'f']}
             onKeyEvent={(key, ev) => {
                 setDirection(key, ev)
-                setGameState('moving')
+                if (gameState !== 'moving') {
+                    setGameState('moving')
+                }
             }}
             />
             <div className='grid'>
