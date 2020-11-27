@@ -240,6 +240,15 @@ const SnekBoard = () => {
                 }
 
             </div>
+            <div className='statistics'>
+                {
+                    gameState && gameState !== 'end'
+                        ?
+                        'things eaten: ' + (snek.length-1).toString()
+                        :
+                        null
+                }
+            </div>
             {/* directions controller */}
             <KeyBoardEventHandler 
             handleKeys={['e', 's', 'd', 'f']}
