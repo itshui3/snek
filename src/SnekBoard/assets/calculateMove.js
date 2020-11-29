@@ -1,4 +1,4 @@
-function validateMove(snek, board, dir) {
+function calculateMove(snek, board, dir) {
 
     const dirMods = {
         'n': [-1, 0],
@@ -22,4 +22,4 @@ function validateMove(snek, board, dir) {
     }
 }
 
-export {validateMove}
+export {calculateMove}

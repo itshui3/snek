@@ -8,6 +8,8 @@ function genEdible(board, size) {
         board[y][x] !== 'empty'
         &&
         board[y][x] !== 'snek'
+        &&
+        board[y][x] !== 'edible'
         )
 
 
