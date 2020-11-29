@@ -204,7 +204,7 @@ const SnekBoard = () => {
 
         if (gameState && !awaitReset) {
             // game progressing
-            setGameState(false)
+            setAwaitReset(true)
             return
         } 
         

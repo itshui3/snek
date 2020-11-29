@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 
 function Cell({
     rowID, 
@@ -6,6 +6,11 @@ function Cell({
     cell,
     placeSnek
 }) {
+
+    useEffect(() => {
+        console.log('cell logs upon render', rowID, cellID)
+    }, [])
+
     return (
         <div
         className={`grid_cell ${cell}`}
