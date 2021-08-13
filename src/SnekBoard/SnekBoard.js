@@ -18,7 +18,7 @@ import {fetchFreshState} from './assets/fetchFreshState'
 // compos
 import Cell from './Cell/Cell'
 
-const preBuiltBoardSize = [10, 10]
+const preBuiltBoardSize = [30, 30]
 
 const SnekBoard = () => {
 // will immer's setState cause a refresh where the useEffect[board, dir] will notice? 
